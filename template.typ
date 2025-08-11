@@ -1,19 +1,38 @@
-#set page(numbering: "1",)
+#set page(numbering: "1")
 #set math.mat(delim: "[")
-#set text(font: (
-    "libertinus serif","Source Han Serif SC"
-),size: 10pt)
+#set text(
+  font: (
+    "libertinus serif",
+    "Source Han Serif SC",
+  ),
+  size: 10pt,
+)
 
 #show raw: set text(font: (
-    "Consolas",
-    "Microsoft Yahei"
+  "Consolas Nerd Font",
+  "Microsoft Yahei",
 ))
+
+#show ref: it => {
+  let eq = math.equation
+  let el = it.element
+  if el != none and el.func() == eq {
+    // Override equation references.
+    link(el.location(), numbering(
+      el.numbering,
+      ..counter(eq).at(el.location()),
+    ))
+  } else {
+    // Other references as usual.
+    it
+  }
+}
 
 
 #set heading(numbering: (..numbers) => {
   // `numbers` 是一个包含各级编号的数组, 例如 (1, 2) 代表 1.2 节
   // 我们只使用除第一个编号外的所有编号
-  let rest=numbers.pos().slice(1)
+  let rest = numbers.pos().slice(1)
   // 如果是一级标题 (rest为空), 则不显示任何内容
   if rest.len() == 0 {
     return none
@@ -198,14 +217,14 @@ void ass(int maxn){
 }
 ```
 ==== gcd
-$(a,b)=(a,b-a)=(b,a-b)$，时间复杂度 $O( log  min { a,b }))$
+$(a,b)=(a,b-a)=(b,a-b)$，时间复杂度 $O( log min { a,b }))$
 ```cpp
 ll gcd(ll x,ll y){ return y ? x : gcd(y, x%y); }
 ```
 也可以，cpp内置 `__gcd(x,y)`
 
 ==== exgcd
-方程 $a x+b y=gcd(a,b)$ 的一组特解，通解是 $(x,y)=(x_0+k dot frac(b,(a,b)),y_0-k dot frac(a,(a,b))),k in ZZ$
+方程 $a x+b y=gcd(a, b)$ 的一组特解，通解是 $(x,y)=(x_0+k dot frac(b, (a,b)),y_0-k dot frac(a, (a,b))),k in ZZ$
 ```cpp
 void exgcd(int a, int b, int &x, int &y) {
     if(!b) return x = 1, y = 0, void();
@@ -223,7 +242,7 @@ int count(int x){ return __builtin_popcount(x); }
 ```
 ==== $phi(n)$
 
-*欧拉函数* $phi(n)=sum_(i=1)^n [gcd(i,n)=1]$.
+*欧拉函数* $phi(n)=sum_(i=1)^n [gcd(i, n)=1]$.
 
 由容斥原理可推出：$n=p_1^(alpha_1) dot p_2^(alpha_2) dots.h.c p_j^(alpha_j) => phi(n)=n dot product_(i=1)^j (1-p_i^(-1)) =(p_1-1)(p_2-1) dots.h.c (p_j-1) dot p_1^(alpha_1-1) dot p_2^(alpha_2-1) dots.h.c p_j^(alpha_j-1)$.
 且 若 $p$ 为素数，有 $phi(p)=p-1$.
@@ -261,46 +280,46 @@ void get_phi(ll maxn){
 }
 ```
 
-==== $a dot  a^(-1)  equiv 1(mod p)$
+==== $a dot a^(-1) equiv 1(mod p)$
 单点求乘法逆元：可以直接解不定方程，$a b equiv 1(mod p) <=> a b=m p+1 <=> a b-m p=1$，有解的充要条件是 $(a,p)=1$.
 也可以由欧拉定理 $(n,a)=1 => a^(phi(n)) equiv 1(mod n)$，特别的，若 $p$ 为素数，则 $a^(p-1) equiv 1(mod p)$.
 
-递推求 $1$ 到 $n$ 的乘法逆元：求 $i$ 的逆元，考虑 $p=floor(frac(p,i)) dot i+p % i equiv 0(mod p)$，其中注意到 $p%i<i$，于是可以递推。$floor(frac(p,i)) dot i equiv -(p\%i)  <=>  i^(-1)  equiv  -(p\%i)^(-1) dot floor(frac(p,i))(mod p)$.
+递推求 $1$ 到 $n$ 的乘法逆元：求 $i$ 的逆元，考虑 $p=floor(frac(p, i)) dot i+p % i equiv 0(mod p)$，其中注意到 $p%i<i$，于是可以递推。$floor(frac(p, i)) dot i equiv -(p\%i) <=> i^(-1) equiv -(p\%i)^(-1) dot floor(frac(p, i))(mod p)$.
 
 ==== extended eular theorem
 *欧拉定理*：$(a,m)=1 => a^(phi(m)) equiv 1(mod m)$
 
-*扩展欧拉定理*：$a^(c) equiv a^(c % phi(m)+ phi(m))(mod m) "if" c >=  phi(m)$，在这里不要求 $(a,m)=1$
+*扩展欧拉定理*：$a^(c) equiv a^(c % phi(m)+ phi(m))(mod m) "if" c >= phi(m)$，在这里不要求 $(a,m)=1$
 
 ==== linear mod equation system
 中国剩余定理 和 两两相消。
 考虑方程组
 
 $
-cases(
-x &equiv a_1 (mod m_1) \
-x &equiv a_2 (mod m_2) \
-& dots.h.c  \
-x &equiv a_k (mod m_k) 
-)
+  cases(
+    x & equiv a_1 (mod m_1) \
+    x & equiv a_2 (mod m_2) \
+      & dots.h.c \
+    x & equiv a_k (mod m_k)
+  )
 $
 
-*中国剩余定理*：如果 $m_1,m_2, dots.h.c  ,m_k$ 两两互素，则有 $x equiv  sum_(i=1)^(k)M_i ' M_i a_i(mod M)$，其中，$M=product_(i=1)^(k) m_i$，$M_i=M \/ m_i$， $M_i ' M_i equiv  1(mod m_i)$
+*中国剩余定理*：如果 $m_1,m_2, dots.h.c ,m_k$ 两两互素，则有 $x equiv sum_(i=1)^(k)M_i ' M_i a_i(mod M)$，其中，$M=product_(i=1)^(k) m_i$，$M_i=M \/ m_i$， $M_i ' M_i equiv 1(mod m_i)$
 
 ==== Inclusion-Exclusion principle
 最简单的形式，便于理解：
 $
- abs(S-A union B) = abs(S) - abs(A) - abs(B) + abs(A inter B)
+  abs(S-A union B) = abs(S) - abs(A) - abs(B) + abs(A inter B)
 $
 
-推广：我们将满足某种性质记作 $a_i$，不满足某种性质记作 $1-a_i$，则有 
+推广：我们将满足某种性质记作 $a_i$，不满足某种性质记作 $1-a_i$，则有
 $
-N((1-a_1)(1-a_2)dots.h.c  (1-a_n))=sum_(k=0)^(n)(-1)^(k) sum_(1<=j_1<= dots.h.c <= j_k <= n)N(a_(j_1)dots.h.c  a_(j_k))
+  N((1-a_1)(1-a_2)dots.h.c (1-a_n))=sum_(k=0)^(n)(-1)^(k) sum_(1<=j_1<= dots.h.c <= j_k <= n)N(a_(j_1)dots.h.c a_(j_k))
 $
 
 如果选 $k$ 种性质进行容斥是相互等价的，还可以写成：
 $
-N((1-a_1)(1-a_2) dots.h.c  (1-a_n))=sum_(k=0)^(n) (-1)^(k) binom(n, k) N(a_1 a_2 dots.h.c  a_k)
+  N((1-a_1)(1-a_2) dots.h.c (1-a_n))=sum_(k=0)^(n) (-1)^(k) binom(n, k) N(a_1 a_2 dots.h.c a_k)
 $
 可以考虑 dp ，如果要枚举集合可以使用 dfs，注意记录 $-1$ 的符号
 
@@ -362,16 +381,16 @@ void ss(int maxn){
 ```
 ==== Möbius inversion
 对于数论函数，常见的两种莫比乌斯反演的两种形式：
-- 对因子反演：$f(n)=sum_(d  divides  n) g(d)  <=>  g(n)= sum_(d  divides  n) mu(frac(n,d)) f(d)= sum_(d \mid n) mu(d)f(frac(n,d))$ （后面的等号是由于因数的成对出现）
-- 对倍数反演：$f(d)= sum_{d  divides  n , n <= N}g(n)  <=>  g(d)= sum_{d  divides  n, n<= N} mu(frac(n, d) )f(n)$
+- 对因子反演：$f(n)=sum_(d divides n) g(d) <=> g(n)= sum_(d divides n) mu(frac(n, d)) f(d)= sum_(d \mid n) mu(d)f(frac(n, d))$ （后面的等号是由于因数的成对出现）
+- 对倍数反演：$f(d)= sum_{d divides n , n <= N}g(n) <=> g(d)= sum_{d divides n, n<= N} mu(frac(n, d))f(n)$
 
 #strong[本质是在整除的意义上划分出的集合上进行容斥]。其中 $mu$ 为莫比乌斯函数：
 $
-mu(x)=cases(
-1 quad & x=1 ,
-(-1)^(k) quad & x=p_1 p_2 dots.h.c p_k ,
-0 quad & x=p_1^(alpha_1) p_2^(alpha_2) dots.h.c p_k^(alpha_k) 
-)
+  mu(x)=cases(
+    1 quad & x=1,
+    (-1)^(k) quad & x=p_1 p_2 dots.h.c p_k,
+    0 quad & x=p_1^(alpha_1) p_2^(alpha_2) dots.h.c p_k^(alpha_k)
+  )
 $
 $mu$ 为积性函数，利用欧拉筛可以 $O(n)$ 递推求
 ```cpp
@@ -394,30 +413,32 @@ void get_mu(int maxn){
 一般单项不好求，但是如果对于倍数的式子相加，或者因数的式子相加的和（就是考虑一个集合的时候）好求，可以考虑整体求，然后对求和的函数进行反演。
 
 ==== Dirichlet convolution
-设 $f:NN  -> RR$, $g:NN  -> RR$，则定义他们的*狄利克雷卷积*为 $(f * g)(n)=sum_(d  divides  n)f(d)g(frac(n, d) )$. 
+设 $f:NN -> RR$, $g:NN -> RR$，则定义他们的*狄利克雷卷积*为 $(f * g)(n)=sum_(d divides n)f(d)g(frac(n, d) )$.
 
 若 $f$ 和 $g$ 为积性函数，则他们的卷积也为积性函数，且满足交换律，结合律。
 
 为了方便，我们定义如下函数：
-- $ 1(n)=1$，在狄利克雷卷积的乘法中与 $\mu$ 互为逆元
+- $1(n)=1$，在狄利克雷卷积的乘法中与 $\mu$ 互为逆元
 - $epsilon(n)=[n=1]$，狄利克雷卷积的乘法单位元
-- $ "id"(n)=n$
+- $"id"(n)=n$
 
 于是，我们有：
-- $f=g*1  <=>  g=f* mu$ (aka. Möbius inversion)
-- $epsilon =  mu * 1  <=>   mu= epsilon* mu$，证明可以考虑右侧反演单位元或者左侧的话其实就是 $(1+(-1))^(k)$ 的二项式展开
-- $ "id"=phi * 1  <=>  phi =  "id" *  mu$
+- $f=g*1 <=> g=f* mu$ (aka. Möbius inversion)
+- $epsilon = mu * 1 <=> mu= epsilon* mu$，证明可以考虑右侧反演单位元或者左侧的话其实就是 $(1+(-1))^(k)$ 的二项式展开
+- $"id"=phi * 1 <=> phi = "id" * mu$
 
 一些技巧：
-- $sum_(i=1)^(n) i  dot  [i perp n]=frac(1, 2) (n phi(n)+ epsilon(n))$
- / #strong("Proof"): 考虑到 $gcd(i,n)=gcd(n-i,n)$，所以他们是成对出现的，一共的对数就是 $phi(n)$，每一对贡献的和是 $n$，特判 $n=1$ 的情况。
+- $sum_(i=1)^(n) i dot [i perp n]=frac(1, 2) (n phi(n)+ epsilon(n))$
+  / #strong(
+      "Proof",
+    ): 考虑到 $gcd(i, n)=gcd(n-i, n)$，所以他们是成对出现的，一共的对数就是 $phi(n)$，每一对贡献的和是 $n$，特判 $n=1$ 的情况。
 
 === Linear algebra
 ==== matrix multiplication
 可以用来加速 线性 dp 的递推。
 数据结构中，将维护值扩展成成维护矩阵。
 
-$A in M_(n times t)(RR)$, $B in M_(t times m)(RR)$,那么 $A B[i,j]= sum_(k=1)^(t)A[i,k]  dot  B[k,j]$.
+$A in M_(n times t)(RR)$, $B in M_(t times m)(RR)$,那么 $A B[i,j]= sum_(k=1)^(t)A[i,k] dot B[k,j]$.
 ```cpp
 const int N=105;
 const ll mod=1e9+7;
@@ -457,10 +478,10 @@ struct mat{
 };
 ```
 ==== Gauss elimination
-线性方程组 $A x=b$ 的解。设 $A$ 的增广矩阵记作 $tilde(A)=[A  divides b]$，将解集记作 $S=\{ x  divides  A x=b \}$，则有
-- $ abs(S)  =0  <=>  "rank"A< "rank" tilde(A)$
+线性方程组 $A x=b$ 的解。设 $A$ 的增广矩阵记作 $tilde(A)=[A divides b]$，将解集记作 $S=\{ x divides A x=b \}$，则有
+- $abs(S) =0 <=> "rank"A< "rank" tilde(A)$
 - $abs(S) =1 <=> "rank"A = "rank" tilde(A)$
-- $abs(S) = aleph_1  <=> "rank"A > "rank" tilde(A)$
+- $abs(S) = aleph_1 <=> "rank"A > "rank" tilde(A)$
 高斯消元时间复杂度 $O(n^{2}m)$
 ```cpp
 constexpr int N=105;
@@ -481,8 +502,8 @@ struct gmat{
 			if(fabs(a[t][c])<eps) continue;
 			for(int i=c;i<m;i++) swap(a[t][i],a[r][i]);
 			for(int i=m-1;i>=c;i--) a[r][i]/=a[r][c];
-			for(int i=r+1;i<n;i++) 
-				if(fabs(a[i][c])>eps) 
+			for(int i=r+1;i<n;i++)
+				if(fabs(a[i][c])>eps)
 					for(int j=m-1;j>=c;j--) a[i][j]-=a[i][c]*a[r][j];
 			r++;
 		}
@@ -541,7 +562,7 @@ struct bmat {
             for (int i = r; i < n; i++) if (a[i][m - 1]) return 0;
             return -1;
         }
-        for (int i = n - 1; i >= 0; i--) 
+        for (int i = n - 1; i >= 0; i--)
             for (int j = 0; j < i; j++)
                 a[j][m - 1] = a[j][m - 1] ^ a[i][m - 1] & a[j][i];
         return 1;
@@ -569,33 +590,33 @@ void insert(ull x){
 形式幂级数 $A(x)=sum_(i>= 0)a_i x^(i)$，记 $x^(n)$ 的系数为 $[x^(n)]A(x)$
 
 形式幂级数 $A(x)$ 的逆元：$A(x) B(x)=1$ 存在的条件是 $[x^(0)]A(x)!= 0$
-- $A(x)=frac(1, 1-a x) =sum _(i>=0) a^(i) x^(i)$
+- $A(x)=frac(1, 1-a x) =sum_(i>=0) a^(i) x^(i)$
 - $A(x)=frac(1, (1-x)^(k)) =sum_(i>=0) binom(i+k-1, i) x^(i)$
 
-对于#strong[组合型枚举]，设 $S={ a_1,a_2, dots.h.c  ,a_k }$，且 $a_i$ 可以取的次数多集合为 $M_i$，记 $F_i (x)=sum_(u in M_i)x^(u)$，则从 $S$ 中取 $n$ 个元素#strong[组成的集合]的方案数 $g(n)$ 的常生成函数 $G(x)= sum_(i>= 0)g(i) x^(i)$，满足
+对于#strong[组合型枚举]，设 $S={ a_1,a_2, dots.h.c ,a_k }$，且 $a_i$ 可以取的次数多集合为 $M_i$，记 $F_i (x)=sum_(u in M_i)x^(u)$，则从 $S$ 中取 $n$ 个元素#strong[组成的集合]的方案数 $g(n)$ 的常生成函数 $G(x)= sum_(i>= 0)g(i) x^(i)$，满足
 
 $
-G(x)=F_1(x)F_2(x) dots.h.c F_k(x)
+  G(x)=F_1(x)F_2(x) dots.h.c F_k(x)
 $
 
 对于 EGF ，设 $f_1(i)$ 表示第一种物品选 $i$ 个的排列方案，$f_2(i)$ 表示第二种物品选 $i$ 个的排列方案，$g(i)$ 表示使用前面两种物品一共 $i$ 个的排列方案，则
 
 $
-g(n)=sum_(i=0) ^(n)binom(n, i)f_1(i)f_2(n-i)  <=> 
-frac(g(n), n!)=sum_(i=0) ^(n)frac(f_1(i), i!) frac(f_2(n-i), (n-i)!)   
+  g(n)=sum_(i=0)^(n)binom(n, i)f_1(i)f_2(n-i) <=>
+  frac(g(n), n!)=sum_(i=0)^(n)frac(f_1(i), i!) frac(f_2(n-i), (n-i)!)
 $
 
-对于#strong[排列型枚举]，设 $S={ a_1,a_2, dots.h.c  ,a_k }$，且 $a_i$ 可以取的次数多集合为 $M_i$，记 $F_i (x)=sum_(u in M_i) x^(u)/u!$，则从 $S$ 中取 $n$ 个元素#strong[排成一列]的方案数 $g(n)$ 的指数生成函数 $G(x)= sum_(i>= 0)g(i) x^(i) / i!$，满足
+对于#strong[排列型枚举]，设 $S={ a_1,a_2, dots.h.c ,a_k }$，且 $a_i$ 可以取的次数多集合为 $M_i$，记 $F_i (x)=sum_(u in M_i) x^(u)/u!$，则从 $S$ 中取 $n$ 个元素#strong[排成一列]的方案数 $g(n)$ 的指数生成函数 $G(x)= sum_(i>= 0)g(i) x^(i) / i!$，满足
 $
-G(x)=F_1(x)F_2(x) dots.h.c F_k(x)
+  G(x)=F_1(x)F_2(x) dots.h.c F_k(x)
 $
 
-- $exp(a x)=1+a x+a^(2) x^(2)/2! + dots.h.c =sum_(n>=0) a^(n) frac(x^(n), n!) $
-- $frac(1, 2)(exp(x)+exp(-x))=1+x^(2)/2!+x^(4)/4!+dots.h.c  $
+- $exp(a x)=1+a x+a^(2) x^(2)/2! + dots.h.c =sum_(n>=0) a^(n) frac(x^(n), n!)$
+- $frac(1, 2)(exp(x)+exp(-x))=1+x^(2)/2!+x^(4)/4!+dots.h.c$
 
 ==== polynomial brute multiplication
 // 形式幂级数 $A(x)=\sum_{i\ge 0}a_i x^{i},\ B(x)=\sum_{i\ge 0}b_i x^{i}$，则定义他们的乘积为 $AB(x)=\sum_{i\ge 0} (\sum_{s+t=i}a_s b_t) x^{i}=\sum_{i\ge 0}(\sum_{j=0}^{i}a_j b_{i-j}) x^{i}$. 暴力计算：
-形式幂级数 $A(x)=sum_(i>=0)a_i x^(i) , B(x)=sum_(i>=0)b_i x^(i)$，则定义他们的乘积为 $A B(x)=sum_(i>=0)(sum_(s+t=i) a_s b_t) x^(i)=sum_(i>=0)(sum_(j=0) ^(i)a_j b_(i-j) )x^(i)  $. 暴力计算：
+形式幂级数 $A(x)=sum_(i>=0)a_i x^(i) , B(x)=sum_(i>=0)b_i x^(i)$，则定义他们的乘积为 $A B(x)=sum_(i>=0)(sum_(s+t=i) a_s b_t) x^(i)=sum_(i>=0)(sum_(j=0)^(i)a_j b_(i-j) )x^(i)$. 暴力计算：
 ```cpp
 struct poly {
     vpii a;
@@ -620,56 +641,58 @@ struct poly {
 ==== FFT
 多项式在点值表示下，乘法的时间复杂度是 $O(n)$，因此我们考虑将多项式先变成点值表示，这个过程叫做 DFT，他的核心思想是对于这 $n$ 个点的取值的选取。
 
-对于多项式 $A(x)$ ，我们将他的偶数项之和记作 $A_0(x)$，将奇数项之和记作 $A_1(x)$，，注意此处的两个部分和的次数是 $deg A_0(x)= deg A_1(x)= frac(1, 2)  deg A(x) = frac(n, 2) $，那么，我们有
+对于多项式 $A(x)$ ，我们将他的偶数项之和记作 $A_0(x)$，将奇数项之和记作 $A_1(x)$，，注意此处的两个部分和的次数是 $deg A_0(x)= deg A_1(x)= frac(1, 2) deg A(x) = frac(n, 2)$，那么，我们有
 
 $
-A(x)=A_0(x^(2))+x A_1(x^(2)) \
-A(-x)=A_0(x^(2))-x A_1(x^(2)) 
+  A(x)=A_0(x^(2))+x A_1(x^(2)) \
+  A(-x)=A_0(x^(2))-x A_1(x^(2))
 $
 
-注意到这是一个分治的过程。因为每次次数折半，且为了保证每次平方复数的模长不会指数爆炸，我们考虑使用 $n$ 次单位根 $omega_(n) ^(k)=e^(i frac(2 pi, n) k)$，他有如下性质：
-- $omega_(n) ^(2k)=omega_(n\/2)^(k) $
-- $omega _(n) ^(k+ n \/ 2)=-omega _(n) ^(k)$
+注意到这是一个分治的过程。因为每次次数折半，且为了保证每次平方复数的模长不会指数爆炸，我们考虑使用 $n$ 次单位根 $omega_(n)^(k)=e^(i frac(2 pi, n) k)$，他有如下性质：
+- $omega_(n)^(2k)=omega_(n\/2)^(k)$
+- $omega_(n)^(k+ n \/ 2)=-omega_(n)^(k)$
 
 
-于是，在 $k<frac(n, 2) $ 时， DFT 变成：
+于是，在 $k<frac(n, 2)$ 时， DFT 变成：
 $
-A(omega_(n) ^(k))=A_0(omega_(n\/2)^(k))+omega_(n) ^(k) A_1(omega_(n\/2)^(k)) \
-A(omega _(n) ^(k+ n \/ 2))=A_0(omega_(n\/2)^(k))-omega_(n) ^(k) A_1(omega_(n\/2)^(k)) 
+  A(omega_(n)^(k))=A_0(omega_(n\/2)^(k))+omega_(n)^(k) A_1(omega_(n\/2)^(k)) \
+  A(omega_(n)^(k+ n \/ 2))=A_0(omega_(n\/2)^(k))-omega_(n)^(k) A_1(omega_(n\/2)^(k))
 $
 
 在每一次枚举 $omega_(n\/2)^(k)$ 的值的时候，我们可以一下得到两组点的值。且次数每次折半，而求值最多需要 $n$ 个值，所以时间复杂度为 $O(n log n)$。
 
-假设 $A(x)=sum_(i=0) ^(n-1)a_i x^(i)$，那么对于 DFT，他的矩阵表示为：
-$ cal(F) = mat(
-  1, 1, 1, dots.h, 1;
-  1, omega_n^1, omega_n^2, dots.h, omega_n^(n-1);
-  1, omega_n^2, omega_n^4, dots.h, omega_n^(2(n-1));
-  dots.v, dots.v, dots.v, dots.down, dots.v;
-  1, omega_n^(n-1), omega_n^(2(n-1)), dots.h, omega_n^((n-1)(n-1));
-)
+假设 $A(x)=sum_(i=0)^(n-1)a_i x^(i)$，那么对于 DFT，他的矩阵表示为：
+$
+  cal(F) = mat(
+    1, 1, 1, dots.h, 1;
+    1, omega_n^1, omega_n^2, dots.h, omega_n^(n-1);
+    1, omega_n^2, omega_n^4, dots.h, omega_n^(2(n-1));
+    dots.v, dots.v, dots.v, dots.down, dots.v;
+    1, omega_n^(n-1), omega_n^(2(n-1)), dots.h, omega_n^((n-1)(n-1));
+  )
 $
 于是我们有：
 
 $
-mat(p_0;p_1;p_2;dots.v;p_(n-1))=cal(F) mat(a_0;a_1;a_2;dots.v;a_(n-1) )
+  mat(p_0; p_1; p_2; dots.v; p_(n-1))=cal(F) mat(a_0; a_1; a_2; dots.v; a_(n-1))
 $
 
-那么，接下来我们得到了点值表示，我们还需要把它最后变成系数表示，这个过程叫做 IDFT，也就是 根据 $[p_i]$ 求系数 $[a_i]$。由于这个变换 $cal(F) $ 的矩阵是一个 Vandemort 矩阵，可逆当且仅当 $omega_n^k$ 互不相同，这是显然的。考虑算出这个变换矩阵的逆矩阵，于是
+那么，接下来我们得到了点值表示，我们还需要把它最后变成系数表示，这个过程叫做 IDFT，也就是 根据 $[p_i]$ 求系数 $[a_i]$。由于这个变换 $cal(F)$ 的矩阵是一个 Vandemort 矩阵，可逆当且仅当 $omega_n^k$ 互不相同，这是显然的。考虑算出这个变换矩阵的逆矩阵，于是
 $
-mat(a_0;a_1;a_2;dots.v;a_(n-1) )=cal(F)^(-1) mat(p_0;p_1;p_2;dots.v;p_(n-1) )
+  mat(a_0; a_1; a_2; dots.v; a_(n-1))=cal(F)^(-1) mat(p_0; p_1; p_2; dots.v; p_(n-1))
 $
 
 其中，
-$ F^(-1) = 1/n mat(
-  1, 1, 1, dots.h, 1;
-  1, omega_n^(-1), omega_n^(-2), dots.h, omega_n^(-(n-1));
-  1, omega_n^(-2), omega_n^(-4), dots.h, omega_n^(-2(n-1));
-  dots.v, dots.v, dots.v, dots.down, dots.v;
-  1, omega_n^(-(n-1)), omega_n^(-2(n-1)), dots.h, omega_n^(-(n-1)(n-1));
-) 
 $
-因此发现，IDFT 只是将 DFT 中的 $omega_(n) ^(k)$ 变成 $omega_(n) ^(-k)$，同时前面乘上了 $frac(1, n) $，时间复杂度也是 $O(n log n)$
+  F^(-1) = 1/n mat(
+    1, 1, 1, dots.h, 1;
+    1, omega_n^(-1), omega_n^(-2), dots.h, omega_n^(-(n-1));
+    1, omega_n^(-2), omega_n^(-4), dots.h, omega_n^(-2(n-1));
+    dots.v, dots.v, dots.v, dots.down, dots.v;
+    1, omega_n^(-(n-1)), omega_n^(-2(n-1)), dots.h, omega_n^(-(n-1)(n-1));
+  )
+$
+因此发现，IDFT 只是将 DFT 中的 $omega_(n)^(k)$ 变成 $omega_(n)^(-k)$，同时前面乘上了 $frac(1, n)$，时间复杂度也是 $O(n log n)$
 
 #emph[注意这是一个一生二，二生四 ...... 的不断开平方根的过程]
 
@@ -739,7 +762,7 @@ void FFT(Complex a[], int lim, int sign) { // lim=2^k
     Complex wn, w, x, y;
     // mid 为区间长度的一半,因为刚好可以和指数上的 2 pi 约掉
     // 同时方便后续蝴蝶操作的 offset 是 区间长度的一半
-    for (int mid = 1; mid < lim; mid <<= 1) {   
+    for (int mid = 1; mid < lim; mid <<= 1) {
         wn = Complex(cos(PI / mid), sign * sin(PI / mid));
         for (int r = mid << 1, j = 0; j < lim; j += r) {
             w = Complex(1, 0);
@@ -769,14 +792,203 @@ void solve() {
     for (int i = 0; i <= n + m; i++) cout << (int)(f[i].r + 0.5) << NN;
 }
 ```
+如果希望乘法后*有返回值*，这里有封装的版本
+```cpp
+namespace FTT {
+constexpr int N = 4e6 + 5;
+const double PI = acos(-1);
+struct Complex {
+    double r, i;
+    Complex(double r = 0, double i = 0) : r(r), i(i) {}
+    Complex operator+(const Complex &p) const { return Complex(r + p.r, i + p.i); }
+    Complex operator-(const Complex &p) const { return Complex(r - p.r, i - p.i); }
+    Complex operator*(const Complex &p) const { return Complex(r * p.r - i * p.i, r * p.i + i * p.r); }
+    void operator+=(const Complex &p) { r += p.r, i += p.i; }
+    void operator*=(const Complex &p) {
+        double t = r;
+        r = r * p.r - i * p.i, i = t * p.i + i * p.r;
+    }
+};
+int df, dg;
+Complex f[N], g[N];
+int limit = 1, L = 0, rev[N];              // limit=min(2^k)>n+m=deg(f'*g')+1,L=log_2(limit)
+void FFT(Complex a[], int lim, int sign) { // lim=2^k
+    for (int i = 0; i < lim; i++)
+        if (i < rev[i]) swap(a[i], a[rev[i]]);
+    Complex wn, w, x, y;
+    // mid 为区间长度的一半,因为刚好可以和指数上的 2 pi 约掉
+    // 同时方便后续蝴蝶操作的 offset 是 区间长度的一半
+    for (int mid = 1; mid < lim; mid <<= 1) {
+        wn = Complex(cos(PI / mid), sign * sin(PI / mid));
+        for (int r = mid << 1, j = 0; j < lim; j += r) {
+            w = Complex(1, 0);
+            for (int k = 0; k < mid; k++, w *= wn) {
+                x = a[j + k], y = w * a[j + mid + k];
+                a[j + k] = x + y, a[j + mid + k] = x - y;
+            }
+        }
+    }
+    if (sign == -1) {
+        for (int i = 0; i < lim; i++) a[i].r /= lim, a[i].i /= lim;
+    }
+}
+void convolve() { // f = f * g
+    limit = 1, L = 0;
+    while (limit <= df + dg) limit <<= 1, L++;
+    for (int i = df + 1; i < limit; i++) f[i] = Complex(0, 0);
+    for (int i = dg + 1; i < limit; i++) g[i] = Complex(0, 0);
+    // rev[11001]=1<<(L-1)+'rev[1100]'=1<<(L-1)+rev[01100] 注意有前导0，所以要把他右移去掉
+    for (int i = 0; i < limit; i++) rev[i] = (rev[i >> 1] >> 1) | ((i & 1) << (L - 1));
+    FFT(f, limit, 1), FFT(g, limit, 1);
+    for (int i = 0; i < limit; i++) f[i] *= g[i];
+    FFT(f, limit, -1);
+}
+} // namespace FTT
+template <class T>
+struct poly {
+    vector<T> coef;
+    ll deg;
+
+    poly() : deg(-1) {}
+    poly(ll d) : deg(d) { coef.resize(d + 5); }
+    void operator=(const poly &rhs) {
+        deg = rhs.deg;
+        coef = rhs.coef;
+    }
+    ll &operator[](T x) { return coef[x]; }
+    const ll &operator[](T x) const { return coef[x]; }
+    poly<T> operator*(const poly &rhs) {
+        poly<T> res(deg + rhs.deg);
+        FTT::df = deg, FTT::dg = rhs.deg;
+        for (int i = 0; i <= FTT::df; i++) FTT::f[i] = FTT::Complex(coef[i], 0);
+        for (int i = 0; i <= FTT::dg; i++) FTT::g[i] = FTT::Complex(rhs[i], 0);
+        FTT::convolve();
+        for (int i = 0; i <= res.deg; i++) res[i] = round(FTT::f[i].r);
+        return res;
+    }
+};
+void solve() {
+    int n, m;
+    cin >> n >> m;
+    poly<ll> f(n), g(m);
+    for (int i = 0; i <= n; i++) cin >> f[i];
+    for (int i = 0; i <= m; i++) cin >> g[i];
+    auto ans = f * g;
+}
+```
+使用 FFT 的更完善的多项式模板
+```cpp
+namespace Poly {
+using cd = complex<double>;
+const double PI = acos(-1.0);
+constexpr int N = 4e6 + 5;
+int limit, L, rev[N];
+
+void FFT(vc<cd> &a, int sign) {
+    for (int i = 0; i < limit; i++)
+        if (i < rev[i]) swap(a[i], a[rev[i]]);
+
+    for (int mid = 1; mid < limit; mid <<= 1) {
+        cd wn(cos(PI / mid), sign * sin(PI / mid));
+        for (int r = mid << 1, j = 0; j < limit; j += r) {
+            cd w(1, 0);
+            for (int k = 0; k < mid; k++, w *= wn) {
+                cd x = a[j + k];
+                cd y = w * a[j + mid + k];
+                a[j + k] = x + y;
+                a[j + mid + k] = x - y;
+            }
+        }
+    }
+
+    if (sign == -1) {
+        for (int i = 0; i < limit; i++) {
+            a[i] /= limit;
+        }
+    }
+}
+using poly = vc<ll>;
+poly get(int deg) { return poly(deg + 1, 0); }
+poly operator+(poly f, poly g) {
+    int d = max(f.size(), g.size());
+    f.resize(d);
+    g.resize(d);
+    poly res = get(d - 1);
+    for (int i = 0; i < d; ++i) {
+        res[i] = f[i] + g[i];
+    }
+    return res;
+}
+
+poly operator-(poly f, poly g) {
+    int d = max(f.size(), g.size());
+    f.resize(d);
+    g.resize(d);
+    poly res = get(d - 1);
+    for (int i = 0; i < d; ++i) {
+        res[i] = f[i] - g[i];
+    }
+    return res;
+}
+
+poly operator*(poly f, poly g) {
+    int df = f.size() - 1, dg = g.size() - 1;
+    limit = 1, L = 0;
+    while (limit <= df + dg) limit <<= 1, L++;
+    for (int i = 0; i < limit; i++) rev[i] = (rev[i >> 1] >> 1) | ((i & 1) << (L - 1));
+    vc<cd> fa(f.begin(), f.end()), fb(g.begin(), g.end());
+    fa.resize(limit), fb.resize(limit);
+    FFT(fa, 1), FFT(fb, 1);
+    for (int i = 0; i < limit; i++) fa[i] *= fb[i];
+    FFT(fa, -1);
+    poly res = get(df + dg);
+    for (int i = 0; i <= df + dg; i++) res[i] = static_cast<ll>(round(fa[i].real()));
+    return res;
+}
+
+poly operator*(poly f, ll x) {
+    for (int i = 0; i < f.size(); i++) f[i] *= x;
+    return f;
+}
+
+poly mod(poly f, int n) {
+    f.resize(n, 0);
+    return f;
+}
+
+poly inv(poly h) {
+    int n = h.size();
+    if (n == 0) return poly();
+    poly f = get(0), d = get(0);
+    f[0] = 1, d[0] = 2;
+    for (int len = 2; (len >> 1) < n; len <<= 1)
+        f = mod(f * (d - mod(h, len) * f), len);
+    return f;
+}
+
+poly sqrt(poly h) {
+    int n = h.size();
+    poly f = get(0);
+    f[0] = 1;
+    for (int len = 2; (len >> 1) < n; len <<= 1) {
+        poly invf = inv(mod(f, len));
+        poly t = mod(h, len) * invf;
+        f.resize(len);
+        f = (f + t) * 0.5; // New f is (f_old + h/f_old)/2
+        f.resize(len);
+    }
+    return f;
+}
+} // namespace Poly
+```
 
 ==== Lagrange interpolation
-已知 $n+1$ 个点 $(x_i,y_i) forall i in \{ 0, dots.h.c  ,n \}$，可以通过*拉格朗日插值*求出一个 $n$ 阶多项式 $f(x)$，满足 $f(x_i)=y_i$.
+已知 $n+1$ 个点 $(x_i,y_i) forall i in \{ 0, dots.h.c ,n \}$，可以通过*拉格朗日插值*求出一个 $n$ 阶多项式 $f(x)$，满足 $f(x_i)=y_i$.
 
-考虑构造函数 $f(x)=sum_(i=0) ^(n) f_i (x)$，其中 $f_i (x_j)=[i=j]$，因此对于 $f_i (x)$，每个 $x_j (j!=i)$ 都是他的零点，所以 $f_i (x)=c_i  dot product_(j!=i) (x-x_j) $，代入 $x=x_i$，可以知道这个待定的系数是 $c_i=y_i dot  product_(j!=i) (x-x_j)^(-1) $，因此我们达到了拉格朗日多项式：
+考虑构造函数 $f(x)=sum_(i=0)^(n) f_i (x)$，其中 $f_i (x_j)=[i=j]$，因此对于 $f_i (x)$，每个 $x_j (j!=i)$ 都是他的零点，所以 $f_i (x)=c_i dot product_(j!=i) (x-x_j)$，代入 $x=x_i$，可以知道这个待定的系数是 $c_i=y_i dot product_(j!=i) (x-x_j)^(-1)$，因此我们达到了拉格朗日多项式：
 
 $
-f(x)=sum_(i=0) ^(n) f_i (x)=sum_(i=0) ^(n)y_i  dot product_(j!=i) frac(x-x_j,x_i-x_j ) 
+  f(x)=sum_(i=0)^(n) f_i (x)=sum_(i=0)^(n)y_i dot product_(j!=i) frac(x-x_j, x_i-x_j)
 $
 
 拉格朗日插值可以看成是在多项式环上的中国剩余定理 CRT。（感觉有点类似线性对偶基）
@@ -804,9 +1016,9 @@ ll lagrange(int k) {
 ```
 - $x_i=i$，且需要求 $f(k)$，时间复杂度可以做到 $O(n)$
 
-  此时，原式变为 $f(k)=sum_(i=1) ^(n)y_i product_(j!=i)frac(k-j, i-j) $，对于分子来说，，有 $product_(j!=i) k-j=frac(1, k-i) product_(j=0)^(n) k-j$ 可以维护关于 $k$ 的前缀积和后缀积，对于分母来说，可以维护阶乘，这样可以 $O(1)$ 计算 $product_(j!=i) frac(k-j, i-j)$，从而整体时间复杂度为 $O(n)$ 
+  此时，原式变为 $f(k)=sum_(i=1)^(n)y_i product_(j!=i)frac(k-j, i-j)$，对于分子来说，，有 $product_(j!=i) k-j=frac(1, k-i) product_(j=0)^(n) k-j$ 可以维护关于 $k$ 的前缀积和后缀积，对于分母来说，可以维护阶乘，这样可以 $O(1)$ 计算 $product_(j!=i) frac(k-j, i-j)$，从而整体时间复杂度为 $O(n)$
 
- （以下代码为拉插求 $f(n)=sum_(i=1) ^(n)i^(k)$，可以知道 $deg f=k+1$，所以需要 $k+2$ 个点）
+  （以下代码为拉插求 $f(n)=sum_(i=1)^(n)i^(k)$，可以知道 $deg f=k+1$，所以需要 $k+2$ 个点）
 
 ```cpp
 const ll mod = 1e9 + 7;
@@ -831,21 +1043,21 @@ void solve() {
 ```
 
 ==== primitive root
-在 $ZZ_(m) $ 上，若 $a perp m$，定义整数 $a$ 的*阶*为 $min_(delta in ZZ_(+) ) a^(delta) equiv 1(mod m)  $. 如果 $delta_(m) (a)=phi(m)$，则称 $a$ 为 $m$ 的*原根*. ( 原根是可以仅仅通过自己生成整个有限域的东西 )
+在 $ZZ_(m)$ 上，若 $a perp m$，定义整数 $a$ 的*阶*为 $min_(delta in ZZ_(+) ) a^(delta) equiv 1(mod m)$. 如果 $delta_(m) (a)=phi(m)$，则称 $a$ 为 $m$ 的*原根*. ( 原根是可以仅仅通过自己生成整个有限域的东西 )
 
-若 $a perp m, delta =delta_(m)(a) $, 阶有如下性质 :
+若 $a perp m, delta =delta_(m)(a)$, 阶有如下性质 :
 + $a^(0),a^(1),dots.h.c ,a^(delta-1)$ 两两不同. ( 反证法 )
-+ $a^(gamma) equiv a^(gamma') (mod m)<=> gamma  equiv gamma' (mod delta)$ ( 阶是最小的循环节 )
++ $a^(gamma) equiv a^(gamma') (mod m)<=> gamma equiv gamma' (mod delta)$ ( 阶是最小的循环节 )
 + $delta divides phi(m)$. \
-  考虑 反证法, 设 $phi(m)=q dot delta+r, 0<r<delta$, 则有 $a^(phi(m)) equiv a ^(delta dot q + r) equiv 1(mod m)  <=> a^(r)  equiv 1 (mod m)$, 与原根定义矛盾
-+ 若 $delta_(m) (a)=g$, 则 $delta_(m)(a^(k))=g \/ gcd(g,k)  $\
-  设 $delta_(m) (a^(k))=t$, 则有 $a^(k t) equiv a^(g) equiv 1(mod m)  <=> k t equiv g  equiv 0 (mod g)$, 设 $k=gcd(k,g) dot p_1, g=gcd(k,g) dot p_2, p_1 perp p_2$, 化简得 $g  divides k t  <=> p_2  divides p_1 dot t  <=> p_2  divides  t  <=> t=q dot (g \/ gcd(k,g))$ 因为阶要求最小, 所以 $delta_(m) a^(k)=t=g \/ gcd(k,g)$. 
+  考虑 反证法, 设 $phi(m)=q dot delta+r, 0<r<delta$, 则有 $a^(phi(m)) equiv a^(delta dot q + r) equiv 1(mod m) <=> a^(r) equiv 1 (mod m)$, 与原根定义矛盾
++ 若 $delta_(m) (a)=g$, 则 $delta_(m)(a^(k))=g \/ gcd(g, k)$\
+  设 $delta_(m) (a^(k))=t$, 则有 $a^(k t) equiv a^(g) equiv 1(mod m) <=> k t equiv g equiv 0 (mod g)$, 设 $k=gcd(k, g) dot p_1, g=gcd(k, g) dot p_2, p_1 perp p_2$, 化简得 $g divides k t <=> p_2 divides p_1 dot t <=> p_2 divides t <=> t=q dot (g \/ gcd(k, g))$ 因为阶要求最小, 所以 $delta_(m) a^(k)=t=g \/ gcd(k, g)$.
 
-只有 $2,4,p^(a),2p^(a)$ 有原根,其中 $p$ 为奇素数. 
+只有 $2,4,p^(a),2p^(a)$ 有原根,其中 $p$ 为奇素数.
 
-*设 $m>1, g perp m$, 则 $g$ 为 $m$ 的原根当且仅当 对于任意 $phi(m)$ 的质因子 $q_i$, $g^(phi(m)\/q_i) equiv.not 1(mod m) $.* 因为 $delta  divides phi(m)$, 若 $g$ 不是原根,那么 $delta$ 一定是 $phi(m)$ 的真因子, 而 $phi(m)\/q_i$ 涵盖了所有 $phi(m)$ 的真因子的倍数. 这样寻找原根最小原根的时间复杂度大约是 $ O(root(4,n))$. 
+*设 $m>1, g perp m$, 则 $g$ 为 $m$ 的原根当且仅当 对于任意 $phi(m)$ 的质因子 $q_i$, $g^(phi(m)\/q_i) equiv.not 1(mod m)$.* 因为 $delta divides phi(m)$, 若 $g$ 不是原根,那么 $delta$ 一定是 $phi(m)$ 的真因子, 而 $phi(m)\/q_i$ 涵盖了所有 $phi(m)$ 的真因子的倍数. 这样寻找原根最小原根的时间复杂度大约是 $O(root(4, n))$.
 
-由于原根可以生成整个有限域的元素, 其余的原根一定也是最小原根 $g$ 的幂次, 由第四条性质若 $g$ 是 $m$ 的原根, 则 $g^(k)$ 也是原根的充要条件是 $k perp phi(m)$, 因此可以利用这个性质来找出所有原根. 所以, 所有的原根的数量就是 $sum_(k=1)^(phi(m))[k perp phi(m)]=phi(phi(m)) $. 因此, $n$ 的原根的数量是 $phi(phi(n))$, 因此整个算法的时间复杂度是 $O(root(4,n)log n)$.
+由于原根可以生成整个有限域的元素, 其余的原根一定也是最小原根 $g$ 的幂次, 由第四条性质若 $g$ 是 $m$ 的原根, 则 $g^(k)$ 也是原根的充要条件是 $k perp phi(m)$, 因此可以利用这个性质来找出所有原根. 所以, 所有的原根的数量就是 $sum_(k=1)^(phi(m))[k perp phi(m)]=phi(phi(m))$. 因此, $n$ 的原根的数量是 $phi(phi(n))$, 因此整个算法的时间复杂度是 $O(root(4, n)log n)$.
 ```cpp
 ///// require /////
 // get_phi(), qmi()
@@ -914,18 +1126,22 @@ void solve() {
 对于质数 $p$, 假设 $g$ 是 $p$ 的一个原根, 则 $g^(0),g^(1),dots.h.c ,g^(p-2)$在模 $p$ 的意义下是 $1,2,dots.h.c ,p-1$ 的一个排列. ( 一因为他们两两不同, 且没有零元 ). 假设对于 $1<=x< phi(p)=p-1$ 有 $g^(c) equiv x(mod p)$, 则称 $x$ 的*指标/离散对数* 为 $c$, 记作 $"ind" x= "ind"_(g)x$.
 
 对于离散对数, 有类似对数的性质:
-+ $ "ind" (x y) equiv  "ind"(x)  + "ind" y (mod phi(p))$ \
- / #strong("Proof"):$g ^( "ind" (x y)) equiv x y  equiv g^( "ind" x) dot g ^( "ind" y)=g ^( "ind" x+ "ind" y)(mod p)$ 又由于 $a^(gamma) equiv a^(gamma') (mod m)<=> gamma  equiv gamma' (mod delta)$, 得证.
-+ $ "ind" x^(c)   equiv  c  "ind" x (mod phi(p))$\
- / #strong("Proof"):由第一个性质直接得到.
-+ 若 $g_1$ 也是 $p$ 的原根, 则 $ "ind"_(g) a  equiv   "ind"_(g_1) a  dot  "ind"_(g) g_1 (mod phi(p))$.\
- / #strong("Proof"): 设 $x= "ind"_(g_1)a  <=> g_1^(x) equiv a (mod p)$,  $y= "ind"_(g)g_1 <=> g^(y) equiv g_1(mod p) $. 于是我们得到,  $a=g^(x y) equiv g ^( "ind"_(g) a) (mod p)$, 利用阶的性质得证.
++ $"ind" (x y) equiv "ind"(x) + "ind" y (mod phi(p))$ \
+  / #strong(
+      "Proof",
+    ): $g^( "ind" (x y)) equiv x y equiv g^( "ind" x) dot g^( "ind" y)=g^( "ind" x+ "ind" y)(mod p)$ 又由于 $a^(gamma) equiv a^(gamma') (mod m)<=> gamma equiv gamma' (mod delta)$, 得证.
++ $"ind" x^(c) equiv c "ind" x (mod phi(p))$\
+  / #strong("Proof"): 由第一个性质直接得到.
++ 若 $g_1$ 也是 $p$ 的原根, 则 $"ind"_(g) a equiv "ind"_(g_1) a dot "ind"_(g) g_1 (mod phi(p))$.\
+  / #strong(
+      "Proof",
+    ): 设 $x= "ind"_(g_1)a <=> g_1^(x) equiv a (mod p)$,  $y= "ind"_(g)g_1 <=> g^(y) equiv g_1(mod p)$. 于是我们得到,  $a=g^(x y) equiv g^( "ind"_(g) a) (mod p)$, 利用阶的性质得证.
 
 可以利用 BSGS (Baby Step Giant Step) 算法求离散对数.
 
-对于 $a,b,m in ZZ_(+) $, BSGS 可以在 $O(sqrt(m) )$ 的时间内求 $a^(x) equiv b(mod m)$, 其中 $a perp m$, 且 $0<= x< m$ ( 注意 $m$ 不一定是素数 ). 
+对于 $a,b,m in ZZ_(+)$, BSGS 可以在 $O(sqrt(m) )$ 的时间内求 $a^(x) equiv b(mod m)$, 其中 $a perp m$, 且 $0<= x< m$ ( 注意 $m$ 不一定是素数 ).
 
-令 $x=s B + t, B=ceil(sqrt(m) ), s<B, t<B$, 于是 $a^(x) equiv a^(s B + t) equiv b <=>  a^(s B) equiv b a^(-t)(mod m)$, 于是我们考虑枚举 $b (a^(-1))^(t)$ 的值, 存入哈希表中, 接下来枚举左边 $(a^(B))^(s)$ 的值, 如果存在与哈希表中, 那么 $x=s B + t$ 就是一个解. 使用 `map` 的话, 时间复杂度多一个 $log$ , 也就是 $O(sqrt(m)log m)$
+令 $x=s B + t, B=ceil(sqrt(m)), s<B, t<B$, 于是 $a^(x) equiv a^(s B + t) equiv b <=> a^(s B) equiv b a^(-t)(mod m)$, 于是我们考虑枚举 $b (a^(-1))^(t)$ 的值, 存入哈希表中, 接下来枚举左边 $(a^(B))^(s)$ 的值, 如果存在与哈希表中, 那么 $x=s B + t$ 就是一个解. 使用 `map` 的话, 时间复杂度多一个 $log$ , 也就是 $O(sqrt(m)log m)$
 
 ```cpp
 // min x s.t. a^x=b ( mod p) p in PP
@@ -946,24 +1162,24 @@ ll BSGS(ll a, ll b, ll p) {
 ```
 
 ==== NTT
-假设质数 $p in PP$ 可以表示成 $p=r  dot 2^(l)+1$, $g$ 是 $p$ 的原根, 那么我们可以使用 $g_n=g^(frac(p-1, n) )$ 来代替 $omega_(n) $, 在此基础上进行的 FFT 就是 NTT. ( 注意这里的 $n$ 依然是 $n=2^(k), k<=l$ )
+假设质数 $p in PP$ 可以表示成 $p=r dot 2^(l)+1$, $g$ 是 $p$ 的原根, 那么我们可以使用 $g_n=g^(frac(p-1, n) )$ 来代替 $omega_(n)$, 在此基础上进行的 FFT 就是 NTT. ( 注意这里的 $n$ 依然是 $n=2^(k), k<=l$ )
 
 这是因为它具有和 $CC$ 上单位根一样良好的性质:
-- $g_(2n) ^(2k) equiv g_(n) ^(k) (mod p) (2n < 2^(l))$
-- $g_(2n)^(n) equiv -1 (mod p) (2n < 2^(l)) $
+- $g_(2n)^(2k) equiv g_(n)^(k) (mod p) (2n < 2^(l))$
+- $g_(2n)^(n) equiv -1 (mod p) (2n < 2^(l))$
 - $sum_(k=0)^(n-1) g_n^(i k)g_n^(-k j) equiv cases(
-n & "if" i=j,
-0 & "otherwise"
-) (mod p)$, 其中 $0<=i,j<n$
+    n & "if" i=j,
+    0 & "otherwise"
+  ) (mod p)$, 其中 $0<=i,j<n$
 
-因此, 对于 DFT 和 IDFT $g_n$ 在 $ZZ_(p)$ 下 与 $omega_(n)$ 在 $CC$ 下的推导过程是一致的. 
+因此, 对于 DFT 和 IDFT $g_n$ 在 $ZZ_(p)$ 下 与 $omega_(n)$ 在 $CC$ 下的推导过程是一致的.
 
 常见模数:
 - $65537=2^(16)+1, g=3, g^(-1)=21846$
 - $998244353=119 dot 2^(23)+1, g=3, g^(-1)=332748118$
 // - #$1004535809=479 dot 2^(21)+1, g=3$.func()
-- #math.equation([#(479*calc.pow(2,21)+1)]) $=479 dot 2^(21)+1>10^(9), g=3, g^(-1)=334845270$
-- #math.equation([#(29*calc.pow(2,57)+1)]) $=29 dot 2^(57)+1>4times 10^(18), g=3, g^(-1)=1393113484733273430$
+- #math.equation([#(479 * calc.pow(2, 21) + 1)]) $=479 dot 2^(21)+1>10^(9), g=3, g^(-1)=334845270$
+- #math.equation([#(29 * calc.pow(2, 57) + 1)]) $=29 dot 2^(57)+1>4times 10^(18), g=3, g^(-1)=1393113484733273430$
 
 ```cpp
 constexpr int N = 4e6 + 5;
@@ -1012,12 +1228,263 @@ void solve() {
 }
 ```
 
-==== \*MTT 
+==== \*MTT
 NTT 可以大值域但是不可任意模数
 
 FFT 可以任意模数（最后取模即可），但是不可以大值域。
 
 还不会 QwQ, 可以参考 luogu 模板题 #link("https://www.luogu.com.cn/problem/P4245")[P4245 【模板】任意模数多项式乘法]
+
+==== Newton's Method
+*牛顿迭代法* 可以解决：给定多项式 $g(x)$，求满足 $g(f(x))=0$ 的形式幂级数 $f(x)=sum_(i=0)^(infinity)a_i x^(i)$
++ 当 $n=1$，也就是 求 $[x^(0) ]f(x)$时，解$g(a_0)=0$
++ 假设已经求出了前 $n$ 项 $f_0(x) equiv a_0+a_1x+ dots.h.c +a_(n-1) x^(n-1) (mod x^(n) )$，则 $f(x) equiv f_0(x)-frac(g(f_0(x)), g'(f_0(x))) (mod x^(2n) )$
+
+*Proof*:
++ 设 $g(x)=sum_(i=0)^(n) b_i x^(i)$，则 $[x^(0)]g(f(x))=b_0+b_1 a_0+ dots.h.c =0=g(a_0)$
++ 考虑对 $g(x)$ 进行泰勒展开
+
+#set math.equation(numbering: "(1)", number-align: bottom)
+$
+  g(f(x))= & g(f_0(x))+g'(f_0(x))(f(x)-f_0(x)) \
+           & +frac(g''(f_0(x)), 2!) (f(x)-f_0(x))^(2) + dots.h.c +
+             frac(g^((n))(f_0(x)), n!)(f(x)-f_0(x))^(n)+ dots.h.c
+$ <taylor>
+#set math.equation(numbering: none)
+由于 $f(x)-f_0(x)=x^(n)(a_n + a_(n+1)x+ dots.h.c )$，因此 $(f(x)-f_0(x))^(2) equiv 0 (mod x^(2n) )$ 因此在 @taylor 中，可以变成
+$
+g(f(x)) &equiv 0 equiv g(f_0(x)) +g'(f_0(x))(f(x)-f_0(x)) (mod x^(2n) )  \
+<=> f(x) &equiv f_0(x)-frac(g(f_0(x)), g'(f_0(x))) (mod x^(2n) )
+$
+===== poly inverse
+设 $h(x)$ 为给定的形式幂级数，求他的逆 $f(x)$ 则 定义 $g(f(x))=frac(1, f(x))-h(x)=0$，得到的迭代式为
+$
+f(x) equiv 2f_0(x)-f_0^(2)(x)h(x)  equiv f_0(x)(2-f_0(x)h(x)) (mod x^(2n) )
+$   
+时间复杂度 $O(n log n)$ 
+===== poly square root
+设 $h(x)$ 为给定的形式幂级数，求他的平方根 $f(x)$ 则 定义 $g(f(x))=f(x)^(2)  -h(x)=0$，得到的迭代式为
+$
+f(x) equiv f_0(x)-frac(f_0^(2)(x)-h(x), 2f_0(x))  equiv frac(f_0(x)^(2) +h(x), 2f_0(x))  equiv 2^(-1) dot (f_0(x)+h(x)f_0^(-1)(x) ) (mod x^(2n) )
+$
+时间复杂度 $O(n log n)$ 
+
+===== poly deriavative
+假设 $f(x)=sum_(i>=0) a_i x^(i)  $ ，定义 $f'(x)=(upright(d)f)/ (upright(d)x)=sum_(i>=0) a_(i+1)x^(i) $ 
+
+时间复杂度 $O(n)$ 
+===== poly intergral
+假设 $f(x)=sum_(i>=1) a_i x^(i)  $ ，定义 $integral f upright(d) x = sum_(i>=0) frac(a_i,i+1 )x^(i+1)   $ ，在这里我们不考虑 $+C$ 
+
+时间复杂度 $O(n)$ 
+===== poly composition
+假设 $f(x)=sum_(i>=0) a_i x^(i) , g(x)=sum_(i>=0) b_i x^(i)$ 则 $g(f(x))=f  compose g(x)= sum_(i>=0) b_i f(x)^(i)  =sum_(i>=0) c_i x^(i)$ ，其中 $c_0=b_0$， $c_n=sum_(k=1)^(n) b_k sum_(i_1+i_2+ dots.h.c +i_k=n) a_(i_1)a_(i_2) dots.h.c a_(i_k) $ 
+
+注意在此处的讨论，我们会将形式幂级数的常数项默认设为 $0$ ,  为了让他的性质很好
+
+===== poly logarithm
+- $ln(1+x)=sum_(n>=1)frac((-1)^(n+1) , n) x^(n)  $ 
+若果形式幂级数 $f(x)$ 满足常数项为 $0$ ，则可以定义 $ln(f(x)):= ln(1+f(x))$ 
+
+于是，我们有 
+$
+(ln(f(x)))'=f'(x) frac(1, f(x))
+$ 
+
+时间复杂度 $O(n log n)$ 
+===== poly exp 
+- $exp(x)=sum_(n>=0) frac(1, n!) x^(n) $ 
+若果形式幂级数 $f(x)$ 满足常数项为 $0$ ，则可以定义 $exp(f(x))$  
+
+我们假设 $g(x)=exp(f(x))$，则 $ln(g(x))-f(x)=0$ ，构造 $h(x,f)=ln x - f(x)=frac(1, x)-f(x)$ ，利用牛顿迭代，假设得到了 $mod x^(n) $ 意义下的 $g_0(x)$，那么
+$
+g(x) equiv g_0(x)(1-ln(g_0(x))+f(x))(mod x^(2n) )
+$   
+
+时间复杂度 $O(n log n)$ 
+
+
+更加完善的 NTT 多项式代码
+```cpp
+constexpr ll MOD = 998244353;
+namespace Poly {
+constexpr int N = 4e6 + 5;
+constexpr ll P = 998244353;
+constexpr ll G = 3;          // primitive root
+constexpr ll iG = 332748118; // inv(G)
+
+ll limit, L, rev[N];
+ll qmi(int a, int b) {
+    ll res = 1;
+    for (ll t = a; b; t = t * t % P, b >>= 1)
+        if (b & 1) res = res * t % P;
+    return res;
+}
+void NTT(vi &a, int lim, int sign, const ll rev[]) { // lim=2^k
+    for (int i = 0; i < lim; i++)
+        if (i < rev[i]) swap(a[i], a[rev[i]]);
+    ll gn, g, x, y;
+    for (ll mid = 1; mid < lim; mid <<= 1) {
+        gn = qmi((sign == 1 ? G : iG), (P - 1) / (mid << 1));
+        for (int r = mid << 1, j = 0; j < lim; j += r) {
+            g = 1;
+            for (int k = 0; k < mid; k++, g = g * gn % P) {
+                x = a[j + k] % P, y = g * a[j + mid + k] % P;
+                a[j + k] = (x + y + P) % P, a[j + mid + k] = (x - y + P) % P;
+            }
+        }
+    }
+    if (sign == -1) {
+        ll inv = qmi(lim, P - 2);
+        for (int i = 0; i < lim; i++) a[i] = a[i] * inv % P;
+    }
+}
+using poly = vi;
+poly get(int deg) { return poly(deg + 1, 0); }
+poly operator+(poly f, poly g) {
+    int d = max(f.size(), g.size());
+    f.resize(d), g.resize(d);
+    poly res = get(d - 1);
+    for (int i = 0; i < d; ++i) res[i] = (f[i] + g[i]) % P;
+    return res;
+}
+poly operator-(poly f, poly g) {
+    int d = max(f.size(), g.size());
+    f.resize(d), g.resize(d);
+    poly res = get(d - 1);
+    for (int i = 0; i < d; ++i) res[i] = (f[i] - g[i] + P) % P;
+    return res;
+}
+poly operator*(poly f, poly g) {
+    if (f.empty() || g.empty()) return {};
+    static ll rev[N];
+    int df = f.size() - 1, dg = g.size() - 1, limit = 1, L = 0;
+    while (limit <= df + dg) limit <<= 1, L++;
+    for (int i = 0; i < limit; i++) rev[i] = (rev[i >> 1] >> 1) | ((i & 1) << (L - 1));
+    f.resize(limit), g.resize(limit);
+    NTT(f, limit, 1, rev), NTT(g, limit, 1, rev);
+    for (int i = 0; i < limit; ++i) f[i] = f[i] * g[i] % P;
+    NTT(f, limit, -1, rev);
+    poly res = get(df + dg);
+    ll inv = qmi(limit, P - 2);
+    for (int i = 0; i <= df + dg; i++) res[i] = f[i];
+    return res;
+}
+poly operator*(poly f, ll x) {
+    for (int i = 0; i < f.size(); i++) f[i] = f[i] * x % P;
+    return f;
+}
+poly mod(poly f, int n) {
+    f.resize(n, 0);
+    return f;
+}
+poly inv(poly h) {
+    poly f = get(0), d = get(0);
+    f[0] = qmi(h[0], P - 2), d[0] = 2;
+    ll n = h.size();
+    for (int len = 2; (len >> 1) < n; len <<= 1) // f0(x) 已经有了 len>>1 项，接下来是要 mod x^(len)
+        f = mod(f * (d - mod(h, len) * f), len);
+    return f;
+}
+poly sqrt(poly h) {
+    poly f = get(0);
+    f[0] = 1;
+    ll inv2 = qmi(2, P - 2), n = h.size();
+    for (int len = 2; (len >> 1) < n; len <<= 1) {
+        poly exf = f;
+        exf.resize(len);
+        poly invf = inv(exf);
+        poly t = mod(h, len);
+        t = mod(t * invf, len);
+        f.resize(len);
+        f = (f + t) * inv2;
+    }
+    return f;
+}
+poly dervt(poly f) {
+    if (f.empty()) return poly();
+    int n = f.size() - 1;
+    if (n == 0) return get(-1); // Derivative of a constant is 0
+    poly res = get(n - 1);
+    for (int i = 0; i < n; i++)
+        res[i] = (ll)f[i + 1] * (i + 1) % P;
+    return res;
+}
+poly integ(poly f) {
+    int n = f.size() - 1;
+    poly res = get(n + 1);
+    for (int i = 0; i <= n; i++) 
+        res[i + 1] = (ll)f[i] * qmi(i + 1, P - 2) % P;
+    return res;
+}
+poly ln(poly f) {
+    int n = f.size();
+    assert(n == 0 || f[0] == 1);
+    poly t = dervt(f) * inv(f);
+    return integ(mod(t, n - 1));
+}
+poly exp(poly f) {
+    int n = f.size();
+    assert(n == 0 || f[0] == 0);
+    poly B = get(0);
+    B[0] = 1;
+    for (int len = 2; (len >> 1) < n; len <<= 1) {
+        poly lnB = ln(mod(B, len)), t = mod(f, len) - lnB;
+        t[0] = (t[0] + 1 + P) % P;
+        B = B * t;
+        B.resize(len);
+    }
+    B.resize(n);
+    return B;
+}
+} // namespace Poly
+using namespace Poly;
+```
+=== Combinatorics
+==== binomial inversion
+*二项式反演* 常用于通过 “指定某若干个” 求 “恰好若干个” 的问题。
+
+考虑容斥原理基本形式
+$
+abs(A_1^(c) inter A_2^(c)  inter   dots.h.c  inter  A_n^(c))=
+abs(S)
+-sum_(1<=j_1<=n)abs(A_(j_1) )
++sum_(1<=j_1<j_2<=n) abs(A_(j_1)  inter  A_(j_2) ) + dots.h.c + (-1)^(n) abs(inter.big_(i=1) ^(n) A_i_1 )  
+$  
+两边替换为补集，得到
+$
+abs(A_1 inter A_2  inter   dots.h.c  inter  A_n)=
+abs(S)
+-sum_(1<=j_1<=n)abs(A_(j_1)^(c) )
++sum_(1<=j_1<j_2<=n) abs(A_(j_1)^(c)  inter  A_(j_2)^(c) ) + dots.h.c + (-1)^(n) abs(inter.big_(i=1) ^(n) A_(i_1)^(c)  )
+$ 
+如果，只和集合的数量有关，而不是具体的集合，那么将 $n$ 个补集集合的交的大小记作 $f(n)$，将$n$ 个原集的集合的交的大小记作 $g(n)$，可以得到
+$
+f(n)=sum_(i=0)^(n)  (-1)^(i) binom(n, i) g(i)  <=> g(n)=sum_(i=0)^(n) (-1)^(i)  binom(n, i) f(i)
+$
+二项式反演有如下几种常见形式：
+
+#(let stirling(n,k)=math.vec(n,k,delim: "{"))
+==== Stirling number of the 2nd kind
+第二类斯特林数 $S_2(n,k)=stirling(n,k)$ 表示 $n$ 个不同的小球放入 $k$ 个相同的盒子（每个盒子不能为空）的方案数。
++ 递推关系：  $S_2(n,k) =S_2(n-1,k-1)+k dot S_2(n,k-1)$
++ 通项公式：  $S_2(n,k)=frac(1, k!)sum_(i=0)^(k) (-1)^(i)  binom(k, i) (k-i)^(n)  $ 
++ 重要公式：  $x^(n)=sum_(k=0)^(n) S_2(n,k) x^(underline(k))$ 
++ 关于 $n$ 的 EGF： $sum_(n>=0) S_2(n,k) frac(x^(n) ,n! )=frac(1, k!)(exp(x)-1)^(k) $  
+
+#strong("Proof:") \
++ 考虑第 $k$ 个球：如果新放入一个盒子，那么前面的球只能放入 $n-1$ 个盒子；如果第 $k$ 个球放入已有的盒子，那么一定有了 $k$ 个盒子，而当前的球可以随便放置其中。
++ 先假设这 $k$ 个盒子互相区分，假设 $a_i$ 表示编号为 $i$ 的盒子为空，那么将 $n$ 个球放到其中的方案数利用容斥可以得到是 $N((1-a_1)(1-a_2) dots.h.c (1-a_k)) = sum_(i=0)^(k) (-1)^(i)  binom(k, i) N(a_1 a_2  dots.h.c a_i) =sum_(i=0)^(k) (-1)^(i)  binom(k, i) (k-i)^(n)  $  ，最后再把盒子的编号消除，得证。   
++ 考虑 $n$ 个球放到 $x$ 个互相区分的盒子中 （盒子可以为空），那么 LHS 是显然的，来看 RHS ，考虑枚举非空的盒子的数量假设为 $k$ 个，那么选出这 $k$ 个盒子的方案数为 $x^(underline(k)) $，对于每一种选出来的方案，放小球的方案数为 $S_2(n,k)$ ，得证。
++     
+
+
+
+==== partition number 
+记 $p(n,k)$  表示 $n$ 个相同的小球放入 $k$ 个相同的盒子的方案数。
++ 递推关系： $p(n,k)=p(n-1,k-1)+p(n-k,k)$ 
++ 关于 $n$ 的 OGF： $sum_(n>=0) p(n,k) x^(n)=x^(k) product_(i=1)^(k) frac(1, 1-x^(i) )   $ 
+
 
 
 #pagebreak()
@@ -1034,14 +1501,23 @@ FFT 可以任意模数（最后取模即可），但是不可以大值域。
 - #link("https://blog.csdn.net/skywalkert/article/details/50500009")[糖老师blog - 浅谈一类积性函数的前缀和]
 - #link("http://jiruyi910387714.is-programmer.com/posts/195270.html")[论逗逼的自我修养之寒假颓废记]
 - #link("https://www.cnblogs.com/darklove/p/7554314.html")[杜教筛]
-- #link("https://sam571128.codes/2021/08/19/dirchlet-convolution-and-mobius-inversion/")[數論 狄利克雷卷積 & 莫比烏斯反演]
+- #link(
+    "https://sam571128.codes/2021/08/19/dirchlet-convolution-and-mobius-inversion/",
+  )[數論 狄利克雷卷積 & 莫比烏斯反演]
 - #link("https://oi-wiki.net/math/number-theory/sqrt-decomposition/")[数论分块 - OI Wiki]
 - #link("https://oi-wiki.net/math/linear-algebra/basis")[线性基 - OI Wiki]
 - #link("https://www.cnblogs.com/houzhiyuan/p/16701158.html")[关于下降幂]
 - #link("https://www.cnblogs.com/zwfymqz/p/8244902.html")[快速傅里叶变换(FFT)详解]
 - #link("https://www.cnblogs.com/cjoieryl/p/8206721.html")[FFT\NTT总结]
 - #link("https://zhuanlan.zhihu.com/p/40505277")[FFT(快速傅里叶变换)0基础详解！附NTT（ACM/OI） - 知乎]
-- #link("https://www.cnblogs.com/BrianPeng/p/12251447.html")[Algorithm: 多项式乘法 Polynomial Multiplication: 快速傅里叶变换 FFT / 快速数论变换 NTT]
+- #link(
+    "https://www.cnblogs.com/BrianPeng/p/12251447.html",
+  )[Algorithm: 多项式乘法 Polynomial Multiplication: 快速傅里叶变换 FFT / 快速数论变换 NTT]
 - #link("https://blog.csdn.net/qq_35649707/article/details/78018944")[拉格朗日插值法及应用]
 - #link("https://www.luogu.com.cn/problem/solution/P6091")[P6091 【模板】原根 题解]
 - #link("https://www.luogu.com/article/gtevwdqx")[FFT / NTT / MTT 学习笔记]
+- #link("https://www.luogu.com.cn/article/ismqu7s9")[多项式与生成函数学习笔记]
+- #link("https://www.cnblogs.com/Elegia")[EntropyIncreaser's Blog]
+- #link("https://www.luogu.com/article/83ub0lvq")[炫酷反演魔术]
+- #link("https://vjudge.net/article/create?from=3691")[FFT/NTT 基本应用]
+- #link("https://www.cnblogs.com/GXZlegend/p/11407185.html")[二项式反演及其应用]
