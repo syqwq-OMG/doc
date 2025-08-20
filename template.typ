@@ -196,10 +196,10 @@ void ss(int maxn){
     for(int i=2;i<=maxn;i++){
         if(!st[i]) primes.pb(i);
         for(int j:primes){
-          if(j>maxn/i) break;
-          st[i*j]=1;
-          if(i%j==0) break;
-      }
+            if(j>maxn/i) break;
+            st[i*j]=1;
+            if(i%j==0) break;
+        }
     }
 }
 ```
@@ -304,7 +304,7 @@ $
   )
 $
 
-*中国剩余定理*：如果 $m_1,m_2, dots.h.c ,m_k$ 两两互素，则有 $x equiv sum_(i=1)^(k)M_i ' M_i a_i(mod M)$，其中，$M=product_(i=1)^(k) m_i$，$M_i=M \/ m_i$， $M_i ' M_i equiv 1(mod m_i)$
+*中国剩余定理*：如果 $m_1,m_2, dots.h.c ,m_k$ 两两互素，则有 $x equiv sum_(i=1)^(k)M_i ' M_i a_i (mod M)$，其中，$M=product_(i=1)^(k) m_i$，$M_i=M \/ m_i$， $M_i ' M_i equiv 1(mod m_i)$
 
 ==== Inclusion-Exclusion principle
 最简单的形式，便于理解：
@@ -593,7 +593,7 @@ void insert(ull x){
 - $A(x)=frac(1, 1-a x) =sum_(i>=0) a^(i) x^(i)$
 - $A(x)=frac(1, (1-x)^(k)) =sum_(i>=0) binom(i+k-1, i) x^(i)$
 
-对于#strong[组合型枚举]，设 $S={ a_1,a_2, dots.h.c ,a_k }$，且 $a_i$ 可以取的次数多集合为 $M_i$，记 $F_i (x)=sum_(u in M_i)x^(u)$，则从 $S$ 中取 $n$ 个元素#strong[组成的集合]的方案数 $g(n)$ 的常生成函数 $G(x)= sum_(i>= 0)g(i) x^(i)$，满足
+对于#strong[组合型枚举]，设 $S={ a_1,a_2, dots.h.c ,a_k }$，且 $a_i$ 可以取的次数的集合为 $M_i$，记 $F_i (x)=sum_(u in M_i)x^(u)$，则从 $S$ 中取 $n$ 个元素#strong[组成的集合]的方案数 $g(n)$ 的常生成函数 $G(x)= sum_(i>= 0)g(i) x^(i)$，满足
 
 $
   G(x)=F_1(x)F_2(x) dots.h.c F_k(x)
@@ -605,14 +605,17 @@ $
   g(n)=sum_(i=0)^(n)binom(n, i)f_1(i)f_2(n-i) <=>
   frac(g(n), n!)=sum_(i=0)^(n)frac(f_1(i), i!) frac(f_2(n-i), (n-i)!)
 $
+除以 $n!$ 的作用就是*暂时“抵消”掉这 $n$ 个对象自身的排列属性*，使得它们在数学上更容易组合。当我们把两个 EGF 相乘时，这个被抵消的排列属性会以一种极其优美的方式被重新组合起来。 $g_n = sum_(i=0)^(n) binom(n, i)f_1(i) f_2(n-i)$ 代表：将 $n$ 个有标号的对象分成*两部分*，第一部分构成 $f_1$ 结构，第二部分构成 $f_2$ 结构的方案总数。
 
-对于#strong[排列型枚举]，设 $S={ a_1,a_2, dots.h.c ,a_k }$，且 $a_i$ 可以取的次数多集合为 $M_i$，记 $F_i (x)=sum_(u in M_i) x^(u)/u!$，则从 $S$ 中取 $n$ 个元素#strong[排成一列]的方案数 $g(n)$ 的指数生成函数 $G(x)= sum_(i>= 0)g(i) x^(i) / i!$，满足
+对于#strong[排列型枚举]，设 $S={ a_1,a_2, dots.h.c ,a_k }$，且 $a_i$ 可以取的次数的集合为 $M_i$，记 $F_i (x)=sum_(u in M_i) x^(u)/u!$，则从 $S$ 中取 $n$ 个元素#strong[排成一列]的方案数 $g(n)$ 的指数生成函数 $G(x)= sum_(i>= 0)g(i) x^(i) / i!$，满足
 $
   G(x)=F_1(x)F_2(x) dots.h.c F_k(x)
 $
 
 - $exp(a x)=1+a x+a^(2) x^(2)/2! + dots.h.c =sum_(n>=0) a^(n) frac(x^(n), n!)$
 - $frac(1, 2)(exp(x)+exp(-x))=1+x^(2)/2!+x^(4)/4!+dots.h.c$
+- $ln(1+x)=sum_(n>=1)frac((-1)^(n+1) , n) x^(n)  $ 
+- $-ln(1-x)=sum_(n>=1) frac(1, n) x^(n)  $ 
 
 ==== polynomial brute multiplication
 // 形式幂级数 $A(x)=\sum_{i\ge 0}a_i x^{i},\ B(x)=\sum_{i\ge 0}b_i x^{i}$，则定义他们的乘积为 $AB(x)=\sum_{i\ge 0} (\sum_{s+t=i}a_s b_t) x^{i}=\sum_{i\ge 0}(\sum_{j=0}^{i}a_j b_{i-j}) x^{i}$. 暴力计算：
@@ -684,7 +687,7 @@ $
 
 其中，
 $
-  F^(-1) = 1/n mat(
+  cal(F)^(-1) = 1/n mat(
     1, 1, 1, dots.h, 1;
     1, omega_n^(-1), omega_n^(-2), dots.h, omega_n^(-(n-1));
     1, omega_n^(-2), omega_n^(-4), dots.h, omega_n^(-2(n-1));
@@ -794,19 +797,18 @@ void solve() {
 ```
 使用 FFT 的更完善的多项式模板
 ```cpp
+//////////// FTT poly //////////////
 namespace Poly {
 using cd = complex<double>;
 const double PI = acos(-1.0);
 constexpr int N = 4e6 + 5;
-int limit, L, rev[N];
 
-void FFT(vc<cd> &a, int sign) {
-    for (int i = 0; i < limit; i++)
+void FFT(vc<cd> &a, int lim, int sign, const ll rev[]) {
+    for (int i = 0; i < lim; i++)
         if (i < rev[i]) swap(a[i], a[rev[i]]);
-
-    for (int mid = 1; mid < limit; mid <<= 1) {
+    for (int mid = 1; mid < lim; mid <<= 1) {
         cd wn(cos(PI / mid), sign * sin(PI / mid));
-        for (int r = mid << 1, j = 0; j < limit; j += r) {
+        for (int r = mid << 1, j = 0; j < lim; j += r) {
             cd w(1, 0);
             for (int k = 0; k < mid; k++, w *= wn) {
                 cd x = a[j + k];
@@ -816,62 +818,49 @@ void FFT(vc<cd> &a, int sign) {
             }
         }
     }
-
     if (sign == -1) {
-        for (int i = 0; i < limit; i++) {
-            a[i] /= limit;
-        }
+        for (int i = 0; i < lim; i++) 
+            a[i] /= lim;
     }
 }
 using poly = vc<ll>;
 poly get(int deg) { return poly(deg + 1, 0); }
 poly operator+(poly f, poly g) {
     int d = max(f.size(), g.size());
-    f.resize(d);
-    g.resize(d);
+    f.resize(d), g.resize(d);
     poly res = get(d - 1);
-    for (int i = 0; i < d; ++i) {
-        res[i] = f[i] + g[i];
-    }
+    for (int i = 0; i < d; ++i) res[i] = f[i] + g[i];
     return res;
 }
-
 poly operator-(poly f, poly g) {
     int d = max(f.size(), g.size());
-    f.resize(d);
-    g.resize(d);
+    f.resize(d), g.resize(d);
     poly res = get(d - 1);
-    for (int i = 0; i < d; ++i) {
-        res[i] = f[i] - g[i];
-    }
+    for (int i = 0; i < d; ++i) res[i] = f[i] - g[i];
     return res;
 }
-
 poly operator*(poly f, poly g) {
-    int df = f.size() - 1, dg = g.size() - 1;
-    limit = 1, L = 0;
+    static ll rev[N];
+    int df = f.size() - 1, dg = g.size() - 1, limit = 1, L = 0;
     while (limit <= df + dg) limit <<= 1, L++;
     for (int i = 0; i < limit; i++) rev[i] = (rev[i >> 1] >> 1) | ((i & 1) << (L - 1));
     vc<cd> fa(f.begin(), f.end()), fb(g.begin(), g.end());
     fa.resize(limit), fb.resize(limit);
-    FFT(fa, 1), FFT(fb, 1);
+    FFT(fa, limit, 1, rev), FFT(fb, limit, 1, rev);
     for (int i = 0; i < limit; i++) fa[i] *= fb[i];
-    FFT(fa, -1);
+    FFT(fa, limit, -1, rev);
     poly res = get(df + dg);
     for (int i = 0; i <= df + dg; i++) res[i] = static_cast<ll>(round(fa[i].real()));
     return res;
 }
-
 poly operator*(poly f, ll x) {
     for (int i = 0; i < f.size(); i++) f[i] *= x;
     return f;
 }
-
 poly mod(poly f, int n) {
     f.resize(n, 0);
     return f;
 }
-
 poly inv(poly h) {
     int n = h.size();
     if (n == 0) return poly();
@@ -881,7 +870,6 @@ poly inv(poly h) {
         f = mod(f * (d - mod(h, len) * f), len);
     return f;
 }
-
 poly sqrt(poly h) {
     int n = h.size();
     poly f = get(0);
@@ -896,6 +884,7 @@ poly sqrt(poly h) {
     return f;
 }
 } // namespace Poly
+using namespace Poly;
 ```
 
 ==== Lagrange interpolation
@@ -1144,12 +1133,125 @@ void solve() {
 }
 ```
 
-==== \*MTT
+==== MTT
 NTT 可以大值域但是不可任意模数
 
 FFT 可以任意模数（最后取模即可），但是不可以大值域。
 
-还不会 QwQ, 可以参考 luogu 模板题 #link("https://www.luogu.com.cn/problem/P4245")[P4245 【模板】任意模数多项式乘法]
+对于 MTT， 可以使用三模数NTT+CRT 或者拆系数FTT。
+在这里只介绍 三模数NTT+CRT 
+
+既然我们不能再模 $M$ 的意义下直接NTT，那我们换个思路：
++ 找几个互素的，满足要求的模数 $p_1,p_2,p_3, \ldots $
++ 分别算出多项式乘积在模这些NTT模数下的结果，也就是 $C(x)(mod p_1), C(x)(mod p_2), C(x)(mod p_3), \ldots $  
++ 利用 CRT，将这些结果合并，得到乘积 $C(x)$ 在模 $p_1p_2 p_3dots.h.c$  下的结果
++ 只要我们选的模数乘积足够大，就能覆盖 $C(x)$ 的真实的系数范围，那么我们得到的就是 $C(x)$ 的真实系数，最后再将这些系数对于 $M$ 取模即可 
+
+```cpp
+namespace MTT {
+constexpr int N = 4e6 + 5;
+using lll = __int128;
+using poly = vector<ll>;
+constexpr ll P1 = 998244353, G1 = 3;
+constexpr ll P2 = 1004535809, G2 = 3;
+constexpr ll P3 = 469762049, G3 = 3;
+
+ll qmi(ll a, ll b, ll p) {
+    ll res = 1;
+    for (ll t = a; b; t = (lll)t * t % p, b >>= 1) if (b & 1) res = (lll)res * t % p;
+    return res;
+}
+poly get(int deg) { return poly(deg + 1, 0); }
+
+template <ll P, ll G>
+void NTT(poly& a, int lim, int sign) {
+    static int rev[N];
+    for (int i = 0; i < lim; i++) {
+        rev[i] = (rev[i >> 1] >> 1) | ((i & 1) ? (lim >> 1) : 0);
+        if (i < rev[i]) swap(a[i], a[rev[i]]);
+    }
+    
+    ll iG = qmi(G, P - 2, P);
+    for (ll mid = 1; mid < lim; mid <<= 1) {
+        ll gn = qmi((sign == 1 ? G : iG), (P - 1) / (mid << 1), P);
+        for (int j = 0; j < lim; j += (mid << 1)) {
+            ll g = 1;
+            for (int k = 0; k < mid; k++, g = (lll)g * gn % P) {
+                ll x = a[j + k];
+                ll y = (lll)g * a[j + mid + k] % P;
+                a[j + k] = (x + y) % P;
+                a[j + mid + k] = (x - y + P) % P;
+            }
+        }
+    }
+
+    if (sign == -1) {
+        ll inv_lim = qmi(lim, P - 2, P);
+        for (int i = 0; i < lim; i++) a[i] = (lll)a[i] * inv_lim % P;
+    }
+}
+
+poly add(poly f, poly g, ll mod){
+	int d = max(f.size(), g.size());
+    f.resize(d), g.resize(d);
+    poly res = get(d - 1);
+    for (int i = 0; i < d; ++i) res[i] = (f[i] + g[i]) % mod;
+    return res;
+}
+
+poly sub(poly f, poly g, ll mod) {
+    int d = max(f.size(), g.size());
+    f.resize(d), g.resize(d);
+    poly res = get(d - 1);
+    for (int i = 0; i < d; ++i) res[i] = (f[i] - g[i] + mod) % mod;
+    return res;
+}
+
+poly mul(poly f, poly g, int mod) {
+    if (f.empty() || g.empty()) return {};
+
+    int df = f.size() - 1, dg = g.size() - 1;
+    int limit = 1;
+    while (limit <= df + dg) limit <<= 1;
+
+    f.resize(limit), g.resize(limit);
+
+    poly f1 = f, g1 = g;
+    for(auto& x : f1) x %= P1; for(auto& x : g1) x %= P1;
+    NTT<P1, G1>(f1, limit, 1); NTT<P1, G1>(g1, limit, 1);
+    for (int i = 0; i < limit; i++) f1[i] = (lll)f1[i] * g1[i] % P1;
+    NTT<P1, G1>(f1, limit, -1);
+
+    poly f2 = f, g2 = g;
+    for(auto& x : f2) x %= P2; for(auto& x : g2) x %= P2;
+    NTT<P2, G2>(f2, limit, 1); NTT<P2, G2>(g2, limit, 1);
+    for (int i = 0; i < limit; i++) f2[i] = (lll)f2[i] * g2[i] % P2;
+    NTT<P2, G2>(f2, limit, -1);
+
+    poly f3 = f, g3 = g;
+    for(auto& x : f3) x %= P3; for(auto& x : g3) x %= P3;
+    NTT<P3, G3>(f3, limit, 1); NTT<P3, G3>(g3, limit, 1);
+    for (int i = 0; i < limit; i++) f3[i] =  (lll)f3[i] * g3[i] % P3;
+    NTT<P3, G3>(f3, limit, -1);
+    
+    poly res(df + dg + 1);
+    ll invp12 = qmi(P1, P2 - 2, P2);
+    ll invp123 = qmi((lll)P1 * P2 % P3, P3 - 2, P3);
+    ll M1 = P1;
+    ll M2 = (lll)P1 * P2;
+
+    for (int i = 0; i <= df + dg; i++) {
+        ll a1 = f1[i], a2 = f2[i], a3 = f3[i];
+        ll k1 = (lll)(a2 - a1 + P2) % P2 * invp12 % P2;
+        ll A = a1 + k1 * P1;
+        ll k2 = (lll)(a3 - A % P3 + P3) % P3 * invp123 % P3;
+        res[i] = ((lll)k2 * (M2 % mod) % mod + A % mod) % mod;
+    }
+    return res;
+}
+}
+using namespace MTT;
+```
 
 ==== Newton's Method
 *牛顿迭代法* 可以解决：给定多项式 $g(x)$，求满足 $g(f(x))=0$ 的形式幂级数 $f(x)=sum_(i=0)^(infinity)a_i x^(i)$
@@ -1196,7 +1298,7 @@ $
 ===== poly composition
 假设 $f(x)=sum_(i>=0) a_i x^(i) , g(x)=sum_(i>=0) b_i x^(i)$ 则 $g(f(x))=f  compose g(x)= sum_(i>=0) b_i f(x)^(i)  =sum_(i>=0) c_i x^(i)$ ，其中 $c_0=b_0$， $c_n=sum_(k=1)^(n) b_k sum_(i_1+i_2+ dots.h.c +i_k=n) a_(i_1)a_(i_2) dots.h.c a_(i_k) $ 
 
-注意在此处的讨论，我们会将形式幂级数的常数项默认设为 $0$ ,  为了让他的性质很好
+注意在此处的讨论，我们会将形式幂级数的常数项默认设为 $0$ ,  为了让他的性质更好
 
 ===== poly logarithm
 - $ln(1+x)=sum_(n>=1)frac((-1)^(n+1) , n) x^(n)  $ 
@@ -1222,6 +1324,7 @@ $
 
 更加完善的 NTT 多项式代码
 ```cpp
+//////////// NTT poly //////////////
 constexpr ll MOD = 998244353;
 namespace Poly {
 constexpr int N = 4e6 + 5;
@@ -1229,7 +1332,6 @@ constexpr ll P = 998244353;
 constexpr ll G = 3;          // primitive root
 constexpr ll iG = 332748118; // inv(G)
 
-ll limit, L, rev[N];
 ll qmi(int a, int b) {
     ll res = 1;
     for (ll t = a; b; t = t * t % P, b >>= 1)
@@ -1294,7 +1396,7 @@ poly mod(poly f, int n) {
     f.resize(n, 0);
     return f;
 }
-poly inv(poly h) {
+poly inv(const poly& h) {
     poly f = get(0), d = get(0);
     f[0] = qmi(h[0], P - 2), d[0] = 2;
     ll n = h.size();
@@ -1302,7 +1404,7 @@ poly inv(poly h) {
         f = mod(f * (d - mod(h, len) * f), len);
     return f;
 }
-poly sqrt(poly h) {
+poly sqrt(const poly& h) {
     poly f = get(0);
     f[0] = 1;
     ll inv2 = qmi(2, P - 2), n = h.size();
@@ -1317,7 +1419,7 @@ poly sqrt(poly h) {
     }
     return f;
 }
-poly dervt(poly f) {
+poly dervt(const poly& f) {
     if (f.empty()) return poly();
     int n = f.size() - 1;
     if (n == 0) return get(-1); // Derivative of a constant is 0
@@ -1326,20 +1428,20 @@ poly dervt(poly f) {
         res[i] = (ll)f[i + 1] * (i + 1) % P;
     return res;
 }
-poly integ(poly f) {
+poly integ(const poly& f) {
     int n = f.size() - 1;
     poly res = get(n + 1);
     for (int i = 0; i <= n; i++) 
         res[i + 1] = (ll)f[i] * qmi(i + 1, P - 2) % P;
     return res;
 }
-poly ln(poly f) {
+poly ln(const poly& f) {
     int n = f.size();
     assert(n == 0 || f[0] == 1);
     poly t = dervt(f) * inv(f);
     return integ(mod(t, n - 1));
 }
-poly exp(poly f) {
+poly exp(const poly& f) {
     int n = f.size();
     assert(n == 0 || f[0] == 0);
     poly B = get(0);
@@ -1378,11 +1480,15 @@ $
 $
 f(n)=sum_(i=0)^(n)  (-1)^(i) binom(n, i) g(i)  <=> g(n)=sum_(i=0)^(n) (-1)^(i)  binom(n, i) f(i)
 $
-二项式反演有如下几种常见形式：
+与莫比乌斯反演类似，二项式反演有两种：
+- 对子集反演 $f(n)=sum_(i=m)^(n)  binom(n, i)   g(i)  <=>sum_(i=m)^(n)  (-1)^(n-i)  binom(n, i) f(i) $ 
+- 对超集反演 $f(n)=sum_(i=n)^(m)  binom(i, n) g(i)  <=> g(n)=sum_(i=n)^(m) (-1)^(m-i)  binom(i, n) f(i)  $  
+
+
 
 #(let stirling(n,k)=math.vec(n,k,delim: "{"))
 ==== Stirling number of the 2nd kind
-第二类斯特林数 $S_2(n,k)=stirling(n,k)$ 表示 $n$ 个不同的小球放入 $k$ 个相同的盒子（每个盒子不能为空）的方案数。
+*第二类斯特林数* $S_2(n,k)=stirling(n,k)$ 表示 *$n$ 个不同的小球放入 $k$ 个相同的盒子（每个盒子不能为空）*的方案数。
 + 递推关系：  $S_2(n,k) =S_2(n-1,k-1)+k dot S_2(n,k-1)$
 + 通项公式：  $S_2(n,k)=frac(1, k!)sum_(i=0)^(k) (-1)^(i)  binom(k, i) (k-i)^(n)  $ 
 + 重要公式：  $x^(n)=sum_(k=0)^(n) S_2(n,k) x^(underline(k))$ 
@@ -1392,14 +1498,74 @@ $
 + 考虑第 $k$ 个球：如果新放入一个盒子，那么前面的球只能放入 $n-1$ 个盒子；如果第 $k$ 个球放入已有的盒子，那么一定有了 $k$ 个盒子，而当前的球可以随便放置其中。
 + 先假设这 $k$ 个盒子互相区分，假设 $a_i$ 表示编号为 $i$ 的盒子为空，那么将 $n$ 个球放到其中的方案数利用容斥可以得到是 $N((1-a_1)(1-a_2) dots.h.c (1-a_k)) = sum_(i=0)^(k) (-1)^(i)  binom(k, i) N(a_1 a_2  dots.h.c a_i) =sum_(i=0)^(k) (-1)^(i)  binom(k, i) (k-i)^(n)  $  ，最后再把盒子的编号消除，得证。   
 + 考虑 $n$ 个球放到 $x$ 个互相区分的盒子中 （盒子可以为空），那么 LHS 是显然的，来看 RHS ，考虑枚举非空的盒子的数量假设为 $k$ 个，那么选出这 $k$ 个盒子的方案数为 $x^(underline(k)) $，对于每一种选出来的方案，放小球的方案数为 $S_2(n,k)$ ，得证。
-+     
++ LHS 就是 $S_2$ 的 EGF，我们看 RHS，假设盒子是互相区分的，将 $n$ 个球放入一个盒子中的 EGF 就是 $exp(x)-1$，因为 $0$ 个球方案是 $0$，而其他情况都只有一种方案。由于盒子是互相区分的，因此放入 $k$ 个盒子的 EGF 就是 $(exp(x)-1)^(k)$，再消除盒子的顺序，得证。
 
+快速求 $S_2(n,k)$
+- 一行 $k=0,1,dots.h.c ,n$ \
+  考虑通项公式
+$
+S_2(n,k)&=frac(1, k!)sum_(i=0)^(k) (-1)^(i)  binom(k, i) (k-i)^(n) 
+=sum_(i=0)^(k) frac((-1)^(i), i!) dot frac((k-i)^(n), (k-i)!)  
+$
+  于是，变成了卷积相乘后的 $k$ 次项，时间复杂度 $O(n log n)$
+  ```cpp
+    constexpr int N = 2e5 + 5;
+    ll ivf[N];
+    void solve() {
+        ll n, k; cin >> n >> k;
+
+        ivf[0] = ivf[1] = 1;
+        for (int i = 2; i <= n; i++) ivf[i] = ivf[i - 1] * qmi(i, MOD - 2) % MOD;
+
+        poly f = get(n), g = get(n);
+        for (int i = 0; i <= n; i++) {
+            if (i & 1) f[i] = (-ivf[i] + MOD) % MOD;
+            else f[i] = ivf[i] % MOD;
+            g[i] = qmi(i, n) * ivf[i] % MOD;
+        }
+
+        auto ans = f * g;
+        for (int i = 0; i <= n; i++) cout << ans[i] << NN;
+    }
+  ```
+- 一列 $n=0,1,dots.h.c ,N$ \
+  考虑 关于 $n$ 的 EGF： $sum_(n>=0) S_2(n,k) frac(x^(n) ,n! )=frac(1, k!)(exp(x)-1)^(k) $，因此对于给定的 $k$ 可以直接求出 $(S_2(n,k))/n!$，时间复杂度 $O(n log n)$
+
+
+  注意对多项式快速幂中取 $ln$ 操作，要求 $[x^(0) ]f(x)=1$，因此在处理 $exp(x)-1$ 时，可以考虑转化成 $exp(x)-1=x+frac(1, 2!)x^(2) + dots.h.c + frac(1, n!)x^(n)+ dots.h.c =x(1+frac(1, 2!)x+ dots.h.c +frac(1, n!)x^(n-1) ) $，然后再分成两部分乘法即可。   
+  ```cpp
+    constexpr int N = 131080;
+    ll ivk, fac[N];
+    void solve(){
+        ll n, k; cin >> n >> k;
+
+        fac[0] = 1;
+        for (int i = 1; i <= n; i++) fac[i] = fac[i - 1] * i % MOD;
+
+        poly g = get(n);
+        for (int i = 0; i <= n; i++) g[i] = qmi(fac[i + 1], MOD - 2);
+        auto lnG = ln(g);
+        lnG = lnG * k;
+        g = exp(lnG);
+
+        ll ivk = qmi(fac[k], MOD - 2);
+        for (int i = 0; i <= n; i++) {
+            if (i < k) cout << 0 << NN;
+            else cout << fac[i] * ivk % MOD * g[i - k] % MOD << NN;
+        }
+    }
+  ```
 
 
 ==== partition number 
-记 $p(n,k)$  表示 $n$ 个相同的小球放入 $k$ 个相同的盒子的方案数。
+$k$ 部-分拆数  $p(n,k)$  表示 $n$ 个相同的小球放入 $k$ 个相同的盒子的方案数。
 + 递推关系： $p(n,k)=p(n-1,k-1)+p(n-k,k)$ 
 + 关于 $n$ 的 OGF： $sum_(n>=0) p(n,k) x^(n)=x^(k) product_(i=1)^(k) frac(1, 1-x^(i) )   $ 
+
+
+
+
+==== Stirling number of the 1st kind
 
 
 
@@ -1437,3 +1603,5 @@ $
 - #link("https://www.luogu.com/article/83ub0lvq")[炫酷反演魔术]
 - #link("https://vjudge.net/article/create?from=3691")[FFT/NTT 基本应用]
 - #link("https://www.cnblogs.com/GXZlegend/p/11407185.html")[二项式反演及其应用]
+- #link("https://www.luogu.com/article/crqhsylk")[初中生都看得懂的快速上手斯特林数指南——从盒放球问题说起]
+- #link("https://www.luogu.com.cn/article/oy8l7j3n")[多项式计数杂谈]
